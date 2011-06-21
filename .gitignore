@@ -1,3 +1,4 @@
 /target/
 .shp
 /src/main/resources/mapdata/countries.shp
+/src/main/resources/mapdata/countries.shx
