@@ -56,7 +56,7 @@ public class FlyingSaucer extends JMapPane {
     // Load the GeoTools logo image which will be our flying saucer
     private static final Image SPRITE_IMAGE;
     static {
-        SPRITE_IMAGE = new ImageIcon(FlyingSaucer.class.getResource("/images/compass_100.png")).getImage();
+        SPRITE_IMAGE = new ImageIcon(FlyingSaucer.class.getResource("/sprites/alien.gif")).getImage();
     }
 
     // Arbitrary distance to move at each step of the animation
@@ -243,7 +243,7 @@ public class FlyingSaucer extends JMapPane {
         frame.getContentPane().add(mapPane);
         frame.setSize(800, 500);
 
-        URL url = FlyingSaucer.class.getResource("/data/shapefiles/countries.shp");
+        URL url = FlyingSaucer.class.getResource("/mapdata/countries.shp");
         FileDataStore store = FileDataStoreFinder.getDataStore(url);
         FeatureSource featureSource = store.getFeatureSource();
 
