@@ -3,6 +3,8 @@ package thyscom.geotoolslab;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -11,6 +13,7 @@ import java.awt.image.Raster;
 import java.io.IOException;
 import java.util.Random;
 import javax.swing.ImageIcon;
+import javax.swing.Timer;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.swing.JMapPane;
@@ -26,7 +29,6 @@ public class Alien {
     private final double movementDistance = 3.0;
     private static final Random rand = new Random();
     private final JMapPane mapPane;
-    
     // X and Y direction of the flying saucer where a value of
     // 1 indicates increasing ordinate and -1 is decreasing
     private int xdir = 1;
@@ -36,15 +38,15 @@ public class Alien {
     private ReferencedEnvelope spriteEnv;
     public Raster spriteBackground;
     private boolean firstDisplay = true;
+
+    public Alien(InvasionMapPane mapPane) {
+        this.mapPane = mapPane;
+        mapPane.setAlien(this);
+    }
+
     // This is the top-level animation method. It erases
     // the sprite (if showing), updates its position and then
     // draws it.
-
-    
-    public Alien(JMapPane mapPane) {
-        this.mapPane = mapPane;
-    }
-    
     public void drawSprite() {
         if (firstDisplay) {
             setSpritePosition();
@@ -59,7 +61,7 @@ public class Alien {
 
     // Erase the sprite by replacing the background map section that
     // was cached when the sprite was last drawn.
-    private void eraseSprite(Graphics2D gr2D) {
+    private void eraseSprite(Graphics2D g2d) {
         if (spriteBackground != null) {
             Rectangle rect = spriteBackground.getBounds();
 
@@ -71,16 +73,16 @@ public class Alien {
 
             image.setData(child);
 
-            gr2D.setBackground(mapPane.getBackground());
-            gr2D.clearRect(rect.x, rect.y, rect.width, rect.height);
-            gr2D.drawImage(image, rect.x, rect.y, null);
+            g2d.setBackground(mapPane.getBackground());
+            g2d.clearRect(rect.x, rect.y, rect.width, rect.height);
+            g2d.drawImage(image, rect.x, rect.y, null);
             spriteBackground = null;
         }
     }
+    
     // Update the sprite's location. In this example we are simply
     // moving at 45 degrees to the map edges and bouncing off when an
     // edge is reached.
-
     private void moveSprite() {
         ReferencedEnvelope displayArea = mapPane.getDisplayArea();
 
@@ -172,5 +174,22 @@ public class Alien {
         Rectangle r = new Rectangle();
         r.setFrameFromDiagonal(p0, p1);
         return r;
+    }  
+    
+    // Arbitrary distance to move at each step of the animation
+    // in world units.
+    // This animation will be driven by a timer which fires
+    // every 200 milliseconds. Each time it fires the drawSprite
+    // method is called to update the animation
+    private Timer animationTimer = new Timer(200, new ActionListener() {
+
+        public void actionPerformed(ActionEvent e) {
+            drawSprite();
+        }
+    });
+    
+    public Timer getTimer() {
+        return animationTimer;
     }
+    
 }
