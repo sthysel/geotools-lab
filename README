@@ -1,2 +1,5 @@
 GeoTools LAB for snippets and experiments. See SpiffGIS for a marginally 
 closer real application.
+
+Because shapefiles are data and generally largish it has been omitted from the repo. For this experiment stick .shp files in resources/mapdata, See the source.
+
