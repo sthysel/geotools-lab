@@ -50,7 +50,7 @@ public class Alien {
         this.mapPane = mapPane;
 
         try {
-            SPRITE_IMAGE = new SVGIcon(this.getClass().getClassLoader().getResource("svg/air1.svg").toString(), 20, 20).getImage();
+            SPRITE_IMAGE = new SVGIcon(this.getClass().getClassLoader().getResource("svg/air1.svg").toString(), 40, 40).getImage();
         } catch (TranscoderException ex) {
             Logger.getLogger(Alien.class.getName()).log(Level.SEVERE, null, ex);
         }
