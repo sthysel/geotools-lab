@@ -3,8 +3,6 @@ package thyscom.geotoolslab;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -13,7 +11,6 @@ import java.awt.image.Raster;
 import java.io.IOException;
 import java.util.Random;
 import javax.swing.ImageIcon;
-import javax.swing.Timer;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.swing.JMapPane;
@@ -26,13 +23,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class Alien {
 
     private static final Image SPRITE_IMAGE = new ImageIcon(InvasionMapPane.class.getResource("/sprites/alien.gif")).getImage();
-    private final double movementDistance = 3.0;
-    private static final Random rand = new Random();
+    private final double movementDistance = 1.0;
+    private final Random rand = new Random();
     private final JMapPane mapPane;
     // X and Y direction of the flying saucer where a value of
     // 1 indicates increasing ordinate and -1 is decreasing
-    private int xdir = 1;
-    private int ydir = 1;
+    private int xdir;
+    private int ydir;
     // The rectangle (in world coordinates) that defines the flying
     // saucer's current position
     private ReferencedEnvelope spriteEnv;
@@ -41,7 +38,17 @@ public class Alien {
 
     public Alien(InvasionMapPane mapPane) {
         this.mapPane = mapPane;
-        mapPane.setAlien(this);
+        xdir = getRandomDirection();
+        ydir = getRandomDirection();
+    }
+
+    private int getRandomDirection() {
+        int val = rand.nextInt(2) - 1;
+        if (val >= 0) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 
     // This is the top-level animation method. It erases
@@ -53,10 +60,10 @@ public class Alien {
             firstDisplay = false;
         }
 
-        Graphics2D gr2D = (Graphics2D) mapPane.getGraphics();
-        eraseSprite(gr2D);
+        Graphics2D g2d = (Graphics2D) mapPane.getGraphics();
+        eraseSprite(g2d);
         moveSprite();
-        paintSprite(gr2D);
+        paintSprite(g2d);
     }
 
     // Erase the sprite by replacing the background map section that
@@ -65,11 +72,8 @@ public class Alien {
         if (spriteBackground != null) {
             Rectangle rect = spriteBackground.getBounds();
 
-            BufferedImage image = new BufferedImage(
-                    rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
-
-            Raster child = spriteBackground.createChild(
-                    rect.x, rect.y, rect.width, rect.height, 0, 0, null);
+            BufferedImage image = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+            Raster child = spriteBackground.createChild(rect.x, rect.y, rect.width, rect.height, 0, 0, null);
 
             image.setData(child);
 
@@ -79,7 +83,7 @@ public class Alien {
             spriteBackground = null;
         }
     }
-    
+
     // Update the sprite's location. In this example we are simply
     // moving at 45 degrees to the map edges and bouncing off when an
     // edge is reached.
@@ -130,10 +134,10 @@ public class Alien {
     // cache that part of the background map image that will be
     // covered by the sprite.
 
-    private void paintSprite(Graphics2D gr2D) {
+    private void paintSprite(Graphics2D g2d) {
         Rectangle bounds = getSpriteScreenPos();
         spriteBackground = mapPane.getBaseImage().getData(bounds);
-        gr2D.drawImage(SPRITE_IMAGE, bounds.x, bounds.y, null);
+        g2d.drawImage(SPRITE_IMAGE, bounds.x, bounds.y, null);
     }
 
     // Set the sprite's intial position
@@ -174,22 +178,5 @@ public class Alien {
         Rectangle r = new Rectangle();
         r.setFrameFromDiagonal(p0, p1);
         return r;
-    }  
-    
-    // Arbitrary distance to move at each step of the animation
-    // in world units.
-    // This animation will be driven by a timer which fires
-    // every 200 milliseconds. Each time it fires the drawSprite
-    // method is called to update the animation
-    private Timer animationTimer = new Timer(200, new ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-            drawSprite();
-        }
-    });
-    
-    public Timer getTimer() {
-        return animationTimer;
     }
-    
 }

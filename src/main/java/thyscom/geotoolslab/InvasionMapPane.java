@@ -32,9 +32,12 @@ import org.geotools.swing.JMapPane;
  */
 public class InvasionMapPane extends JMapPane {
 
-    private Alien alien;
+    private Fleet fleet;
+    
+    public InvasionMapPane(Fleet fleet) throws IOException {
 
-    public InvasionMapPane() throws IOException {
+        this.fleet = fleet;
+        
         URL url = InvasionMapPane.class.getResource("/mapdata/countries.shp");
         FileDataStore store = FileDataStoreFinder.getDataStore(url);
         FeatureSource featureSource = store.getFeatureSource();
@@ -48,19 +51,14 @@ public class InvasionMapPane extends JMapPane {
         setRenderer(new StreamingRenderer());
         
     }
-    
-  
-    // OK this is bad - FIXME
-    public void setAlien(Alien alien) {
-        this.alien = alien;
-    }
 
+ 
     // We override the JMapPane paintComponent method so that when
     // the map needs to be redrawn (e.g. after the frame has been
     // resized) the animation is stopped until rendering is complete.
     @Override
     protected void paintComponent(Graphics g) {
-        alien.getTimer().stop();
+        fleet.pauseInvasion();
         super.paintComponent(g);
     }
 
@@ -69,7 +67,6 @@ public class InvasionMapPane extends JMapPane {
     @Override
     public void onRenderingCompleted() {
         super.onRenderingCompleted();
-        alien.spriteBackground = null;
-        alien.getTimer().start();
+        fleet.resumeInvasion();
     }
 }

@@ -13,11 +13,17 @@ public class Invasion {
 
     Invasion() throws IOException {
         JFrame frame = new JFrame("They will eat the fat people first");
-        InvasionMapPane mapPane = new InvasionMapPane();
+        
+        Fleet fleet = new Fleet();
+        InvasionMapPane mapPane = new InvasionMapPane(fleet);
         frame.getContentPane().add(mapPane);
         frame.setSize(800, 500);
 
-        Alien alien = new Alien(mapPane);
+       
+        for(int i = 0; i <= 10; i++) {
+            Alien alien = new Alien(mapPane);
+            fleet.addAlien(alien);
+        }
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -35,7 +41,5 @@ public class Invasion {
                 }
             }
         });
-
-
     }
 }
