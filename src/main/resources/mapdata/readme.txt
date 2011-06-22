@@ -1,1 +1,1 @@
-Put coutries.shp and countries.shx here.
+Put coutries.shp, countries.shx etc. here. See .gitignore for a hint for what is expected here.
