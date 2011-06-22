@@ -1,0 +1,27 @@
+<assembly>
+   <id>GeoToolsTest</id>
+   <formats>
+      <format>zip</format>
+   </formats>
+   
+   <includeBaseDirectory>true</includeBaseDirectory>
+   <baseDirectory>GeoToolsLab</baseDirectory>
+   
+   <fileSets>
+      <fileSet>
+         <includes>
+            <include>run.sh</include>
+         </includes>
+      </fileSet>
+   </fileSets>
+   
+   <dependencySets>
+      <dependencySet>
+         <outputDirectory>lib</outputDirectory>
+         <unpack>false</unpack>
+         <scope>runtime</scope>
+      </dependencySet>
+   </dependencySets>
+   
+</assembly>
+

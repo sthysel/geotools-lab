@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 public class Invasion {
 
     Invasion() throws IOException {
-        JFrame frame = new JFrame("Animation example");
+        JFrame frame = new JFrame("They will eat the fat people first");
         InvasionMapPane mapPane = new InvasionMapPane();
         frame.getContentPane().add(mapPane);
         frame.setSize(800, 500);
