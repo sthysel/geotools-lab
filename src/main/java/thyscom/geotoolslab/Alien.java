@@ -1,16 +1,25 @@
 package thyscom.geotoolslab;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import org.apache.batik.transcoder.TranscoderException;
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.swing.JMapPane;
@@ -22,7 +31,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class Alien {
 
-    private static final Image SPRITE_IMAGE = new ImageIcon(InvasionMapPane.class.getResource("/sprites/alien.gif")).getImage();
+    // private static final Image SPRITE_IMAGE = new ImageIcon(InvasionMapPane.class.getResource("/svg/air1.svg")).getImage();
+    private static Image SPRITE_IMAGE;
     private final double movementDistance = 1.0;
     private final Random rand = new Random();
     private final JMapPane mapPane;
@@ -38,8 +48,30 @@ public class Alien {
 
     public Alien(InvasionMapPane mapPane) {
         this.mapPane = mapPane;
+
+        try {
+            SPRITE_IMAGE = new SVGIcon(this.getClass().getClassLoader().getResource("svg/air1.svg").toString(), 20, 20).getImage();
+        } catch (TranscoderException ex) {
+            Logger.getLogger(Alien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // SPRITE_IMAGE = loadImageFromDisk( this.getClass().getClassLoader().getResource("sprites/alien.gif"));
+
         xdir = getRandomDirection();
         ydir = getRandomDirection();
+    }
+
+    private Image loadImageFromDisk(URL url) throws IOException {
+        BufferedImage sourceImage = ImageIO.read(url);
+        // create an accelerated image of the right size to store our sprite in
+        Image image = getGraphicsConfiguration().createCompatibleImage(sourceImage.getWidth(), sourceImage.getHeight(), Transparency.BITMASK);
+        // draw our source image into the accelerated image
+        image.getGraphics().drawImage(sourceImage, 0, 0, null);
+
+        return image;
+    }
+
+    private GraphicsConfiguration getGraphicsConfiguration() throws HeadlessException {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
     }
 
     private int getRandomDirection() {
@@ -54,7 +86,7 @@ public class Alien {
     // This is the top-level animation method. It erases
     // the sprite (if showing), updates its position and then
     // draws it.
-    public void drawSprite() {
+    public void drawSprite() throws IOException {
         if (firstDisplay) {
             setSpritePosition();
             firstDisplay = false;
@@ -130,10 +162,10 @@ public class Alien {
 
         spriteEnv.translate(xdelta, ydelta);
     }
+
     // Paint the sprite: before displaying the sprite image we
     // cache that part of the background map image that will be
     // covered by the sprite.
-
     private void paintSprite(Graphics2D g2d) {
         Rectangle bounds = getSpriteScreenPos();
         spriteBackground = mapPane.getBaseImage().getData(bounds);
@@ -141,13 +173,10 @@ public class Alien {
     }
 
     // Set the sprite's intial position
-    private void setSpritePosition() {
+    private void setSpritePosition() throws IOException {
         ReferencedEnvelope worldBounds = null;
-        try {
-            worldBounds = mapPane.getMapContext().getLayerBounds();
-        } catch (IOException ex) {
-            throw new IllegalStateException(ex);
-        }
+        worldBounds = mapPane.getMapContext().getLayerBounds();
+
 
         CoordinateReferenceSystem crs = worldBounds.getCoordinateReferenceSystem();
 

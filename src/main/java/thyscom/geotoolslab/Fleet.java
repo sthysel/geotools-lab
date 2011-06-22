@@ -2,9 +2,12 @@ package thyscom.geotoolslab;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Timer;
 
 /**
@@ -60,9 +63,13 @@ public class Fleet {
         animationTimer.stop();
     }
 
-    private void animate() {
+    private void animate()  {
         for (Alien a : aliens) {
-            a.drawSprite();
+            try {
+                a.drawSprite();
+            } catch (IOException ex) {
+                Logger.getLogger(Fleet.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
