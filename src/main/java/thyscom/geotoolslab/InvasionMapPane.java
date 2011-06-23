@@ -19,6 +19,7 @@ import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
 
 
+
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -59,7 +60,7 @@ public class InvasionMapPane extends JMapPane {
         Style style = SLD.createPolygonStyle(Color.BLACK, Color.CYAN, 1.0F);
         map.addLayer(featureSource, style);
 
-        File rasterFile = new File(InvasionMapPane.class.getResource("/mapdata/potch.tiff").toString());
+        File rasterFile = new File(InvasionMapPane.class.getResource("/mapdata/potch.tif").toString());
         AbstractGridFormat format = GridFormatFinder.findFormat(rasterFile);
         AbstractGridCoverage2DReader reader = format.getReader(rasterFile);
         map.addLayer(reader, createGreyscaleStyle(1));
