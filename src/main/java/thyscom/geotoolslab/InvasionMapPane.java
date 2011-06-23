@@ -11,15 +11,11 @@ package thyscom.geotoolslab;
  */
 import java.awt.Color;
 import java.awt.Graphics;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridFormatFinder;
-
-
-
 import org.geotools.data.FeatureSource;
 import org.geotools.data.FileDataStore;
 import org.geotools.data.FileDataStoreFinder;
@@ -50,24 +46,27 @@ public class InvasionMapPane extends JMapPane {
     public InvasionMapPane(Fleet fleet) throws IOException {
 
         this.fleet = fleet;
-
-        URL url = InvasionMapPane.class.getResource("/mapdata/countries.shp");
-        FileDataStore store = FileDataStoreFinder.getDataStore(url);
-        FeatureSource featureSource = store.getFeatureSource();
-
-        // Create a map context and add our shapefile to it
         MapContext map = new DefaultMapContext();
-        Style style = SLD.createPolygonStyle(Color.BLACK, Color.CYAN, 1.0F);
-        map.addLayer(featureSource, style);
+        
+//        
+//        URL url = InvasionMapPane.class.getResource("/mapdata/countries.shp");
+//        FileDataStore store = FileDataStoreFinder.getDataStore(url);
+//        FeatureSource featureSource = store.getFeatureSource();
+//        Style style = SLD.createPolygonStyle(Color.BLACK, Color.CYAN, 1.0F);
+//        map.addLayer(featureSource, style);
 
-        File rasterFile = new File(InvasionMapPane.class.getResource("/mapdata/potch.tif").toString());
-        AbstractGridFormat format = GridFormatFinder.findFormat(rasterFile);
-        AbstractGridCoverage2DReader reader = format.getReader(rasterFile);
-        map.addLayer(reader, createGreyscaleStyle(1));
+        addTiff(InvasionMapPane.class.getResource("/mapdata/potchmap.tif"), map);
+        addTiff(InvasionMapPane.class.getResource("/mapdata/potchphoto.tif"), map);
 
         setMapContext(map);
         setRenderer(new StreamingRenderer());
 
+    }
+
+    private void addTiff(URL url, MapContext map) {
+        AbstractGridFormat pformat = GridFormatFinder.findFormat(url);
+        AbstractGridCoverage2DReader preader = pformat.getReader(url);
+        map.addLayer(preader, createGreyscaleStyle(1));
     }
 
     /**
@@ -99,7 +98,7 @@ public class InvasionMapPane extends JMapPane {
 
     @Override
     protected void paintComponent(Graphics g) {
-        fleet.pauseInvasion();
+        //fleet.pauseInvasion();
         super.paintComponent(g);
     }
 
@@ -108,6 +107,6 @@ public class InvasionMapPane extends JMapPane {
     @Override
     public void onRenderingCompleted() {
         super.onRenderingCompleted();
-        fleet.resumeInvasion();
+        //fleet.resumeInvasion();
     }
 }

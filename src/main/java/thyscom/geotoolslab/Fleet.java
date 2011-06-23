@@ -44,6 +44,7 @@ public class Fleet {
     // method is called to update the animation
     private Timer animationTimer = new Timer(DELAY, new ActionListener() {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             animate();
         }

@@ -179,6 +179,7 @@ public class Alien {
 
 
         CoordinateReferenceSystem crs = worldBounds.getCoordinateReferenceSystem();
+        System.out.println(crs);
 
         Rectangle screenBounds = mapPane.getVisibleRect();
         int w = SPRITE_IMAGE.getWidth(null);
@@ -187,9 +188,10 @@ public class Alien {
         int x = screenBounds.x + rand.nextInt(screenBounds.width - w);
         int y = screenBounds.y + rand.nextInt(screenBounds.height - h);
 
-        Rectangle r = new Rectangle(x, y, w, h);
+        Rectangle rect = new Rectangle(x, y, w, h);
         AffineTransform tr = mapPane.getScreenToWorldTransform();
-        Rectangle2D rworld = tr.createTransformedShape(r).getBounds2D();
+        System.out.println(tr);
+        Rectangle2D rworld = tr.createTransformedShape(rect).getBounds2D();
 
         spriteEnv = new ReferencedEnvelope(rworld, crs);
     }
